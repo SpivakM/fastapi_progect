@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+{% if user.verified %}
+
+<form method="post" action="{{ url_for('edit_post_web') }}">
+
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="topic" name="edit_post_topic" placeholder="name@example.com" required
+               value="{{ request._form.__dict__._dict.current_post_topic }}" maxlength="50">
+        <label for="topic">Subject</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="text" name="edit_post_text" placeholder="name@example.com"
+               maxlength="500" required value="{{ request._form.__dict__._dict.current_post_text }}">
+        <label for="text" class="form-label">Text</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="category" name="edit_post_category" placeholder="name@example.com"
+               maxlength="25" required value="{{ request._form.__dict__._dict.current_post_category }}">
+        <label for="category" class="form-label">Category</label>
+    </div>
+    <input class="form-control me-2" type="hidden" name="post_id" value="{{ request._form.__dict__._dict.post_id }}">
+    <button type="submit" class="btn btn-primary">Edit Post</button>
+</form>
+{% endif %}
+
+{% endblock %}

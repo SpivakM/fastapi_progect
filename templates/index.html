@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container text-center">
+    <div class="row row-cols-3">
+        {% for item in items %}
+        <div class="col my-2" style="width: 33%;">
+            <div class="card" style="width: 100%;">
+                <div class="card-header">
+                    {{ item[0].category }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ item[0].topic }}</h5>
+                    <p class="card-text">{{ item[0].text }}</p>
+                </div>
+                <footer class="blockquote-footer"> {{ item[1].name }} </footer>
+                {% if item[0].modified %}
+                <footer class="blockquote-footer"> Edited </footer>
+                {% endif %}
+                <ul class="list-group list-group-flush">
+                    {% for i in range(item[2]) %}
+                    <li class="list-group-item"><i>{{ item[4][i].name }}:</i> {{ item[3][i].text }}</li>
+                    {% endfor %}
+                </ul>
+                {% if user.id == item[1].id %}
+                <div class="card-body">
+                    <form class="d-flex" role="form" action="{{ url_for('edit_post_web') }}" method="post">
+                        <input class="form-control me-2" type="hidden" name="current_post_topic" value="{{ item[0].topic }}">
+                        <input class="form-control me-2" type="hidden" name="current_post_text" value="{{ item[0].text }}">
+                        <input class="form-control me-2" type="hidden" name="current_post_category" value="{{ item[0].category }}">
+                        <input class="form-control me-2" type="hidden" name="post_id" value="{{ item[0].id }}">
+                        <div class="card-body m-0 p-0"><button class="btn btn-outline-success" type="submit">Edit post</button></div>
+                    </form>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    {% if user and user.verified %}
+                    <form class="d-flex" role="form" action="{{ url_for('index') }}" method="post">
+                        <input class="form-control me-2" name='add_comment' type="text" placeholder="Add comment..."
+                               aria-label="Add comment" maxlength="100">
+                        <input class="form-control me-2" type="hidden" name="post_id" value="{{ item[0].id }}">
+                        <button class="btn btn-outline-success" type="submit">Submit</button>
+                    </form>
+                    {% endif %}
+                    {% if user and not user.verified %}
+                    <h6 class="card-title"> You must be verified to add a comment </h6>
+                    {% endif %}
+                    {% if not user %}
+                    <h6 class="card-title"> You must be logged in to add a comment </h6>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+{% if not user %}
+<h1>Can't get user data</h1>
+{% endif %}
+
+{% if user.verified %}
+<h1>You are already verified</h1>
+{% endif %}
+
+{% if not user.verified %}
+<h1>We send a verification on your email</h1>
+{% endif %}
+
+{% endblock %}

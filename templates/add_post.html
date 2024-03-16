@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% if not user %}
+<h1>Create an account or log in to post something</h1>
+<a href="{{ url_for('web_register') }}">Sign Up</a>
+<a href="{{ url_for('user_login_web') }}">Log In</a>
+{% endif %}
+
+{% if not user.verified %}
+<h1>Please, verify your account to post something</h1>
+<a href="{{ url_for('verify_account_web') }}">Verify account</a>
+{% endif %}
+
+{% if user.verified %}
+<div class="errors">
+    <ul class="list-group">
+        {% for error in errors %}
+        <li class="list-group-item">{{ error }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<form method="post" action="{{ url_for('add_post_web') }}">
+
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="topic" name="topic" placeholder="name@example.com" required
+               value="{{topic}}" maxlength="50">
+        <label for="topic">Subject</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="text" name="text" placeholder="name@example.com"
+               maxlength="500" required value="{{text}}">
+        <label for="text" class="form-label">Text</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="category" name="category" placeholder="name@example.com"
+               maxlength="25" required value="{{category}}">
+        <label for="category" class="form-label">Category</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Post</button>
+</form>
+{% endif %}
+
+{% endblock %}
