@@ -53,8 +53,11 @@ def send_email(
     mail.quit()
 
 
-def send_email_verification(user_email, user_uuid, user_name, host):
-    activate_url = f"{host}api/user/verify/{user_uuid}"
+def send_email_verification(user_email, user_uuid, user_name, host, is_web=False):
+    if is_web:
+        activate_url = f"{host}your_account_was_verified"
+    else:
+        activate_url = f"{host}api/user/verify/{user_uuid}"
 
     with open(Path(__file__).parent / 'email_verification.html', encoding='utf-8') as file:
         content = file.read()

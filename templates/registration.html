@@ -9,7 +9,7 @@
     </ul>
 </div>
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <div class="form-floating mb-3">
         <input type="text" class="form-control" id="name" name="name" placeholder="name@example.com" required
                value="{{name}}">
@@ -29,6 +29,17 @@
         <input type="password" class="form-control" id="password_confirm" name="password_confirm"
                placeholder="name@example.com" minlength="8" required>
         <label for="password_confirm" class="form-label">Confirm Password</label>
+    </div>
+    <span>Notice: Image URL will be used even when there is an image file</span>
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="image_url" name="image_url"
+               placeholder="name@example.com" value="{{image_url}}">
+        <label for="image_url" class="form-label">Profile image URL</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="file" class="form-control" id="image_file" name="image_file"
+               placeholder="name@example.com">
+        <label for="image_file" class="form-label">Image File</label>
     </div>
     <span>We will send you an email to verify your account</span>
     <br>

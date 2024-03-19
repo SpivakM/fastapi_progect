@@ -25,8 +25,8 @@ class User(BaseInfoMixin, Base):
     is_admin: Mapped[bool] = mapped_column(default=False)
     is_active: Mapped[bool] = mapped_column(default=True)
     verified: Mapped[bool] = mapped_column(default=False)
-    image_url: Mapped[str] = mapped_column(default=default_user_image_url, nullable=False)
-    image_file: Mapped[str] = mapped_column(default='', nullable=False)
+    image_url: Mapped[str] = mapped_column(default='')
+    image_file: Mapped[str] = mapped_column(default='standard_icon.jpg')
 
     tokens = relationship('UserRefreshToken', back_populates='user_for_token')
     post = relationship('Post', back_populates='user_for_post')

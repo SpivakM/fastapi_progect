@@ -15,10 +15,18 @@
                     <h5 class="card-title">{{ item[0].topic }}</h5>
                     <p class="card-text">{{ item[0].text }}</p>
                 </div>
-                <footer class="blockquote-footer"> {{ item[1].name }} </footer>
+                <footer class="blockquote-footer">
+                    {{ item[1].name }}
+                    {% if item[1].image_url %}
+                    <img src="{{ item[1].image_url }}" alt="..." width="20" height="20">
+                    {% else %}
+                    <img src="{{ url_for('user_images', path=item[1].image_file) }}" alt="..." width="20" height="20">
+                    {% endif %}
+                </footer>
                 {% if item[0].modified %}
                 <footer class="blockquote-footer"> Edited </footer>
                 {% endif %}
+                <footer class="blockquote-footer"> {{ item[0].created_at }} </footer>
                 <ul class="list-group list-group-flush">
                     {% for i in range(item[2]) %}
                     <li class="list-group-item"><i>{{ item[4][i].name }}:</i> {{ item[3][i].text }}</li>
@@ -27,11 +35,16 @@
                 {% if user.id == item[1].id %}
                 <div class="card-body">
                     <form class="d-flex" role="form" action="{{ url_for('edit_post_web') }}" method="post">
-                        <input class="form-control me-2" type="hidden" name="current_post_topic" value="{{ item[0].topic }}">
-                        <input class="form-control me-2" type="hidden" name="current_post_text" value="{{ item[0].text }}">
-                        <input class="form-control me-2" type="hidden" name="current_post_category" value="{{ item[0].category }}">
+                        <input class="form-control me-2" type="hidden" name="current_post_topic"
+                               value="{{ item[0].topic }}">
+                        <input class="form-control me-2" type="hidden" name="current_post_text"
+                               value="{{ item[0].text }}">
+                        <input class="form-control me-2" type="hidden" name="current_post_category"
+                               value="{{ item[0].category }}">
                         <input class="form-control me-2" type="hidden" name="post_id" value="{{ item[0].id }}">
-                        <div class="card-body m-0 p-0"><button class="btn btn-outline-success" type="submit">Edit post</button></div>
+                        <div class="card-body m-0 p-0">
+                            <button class="btn btn-outline-success" type="submit">Edit post</button>
+                        </div>
                     </form>
                 </div>
                 {% endif %}
@@ -57,5 +70,33 @@
     </div>
 </div>
 
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if not request.path_params or request.path_params.page == '1' %}
+        <li class="page-item">
+            <a class="page-link disabled" href="#">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="/page={{ request.path_params.page|int -1 }}">Previous</a>
+        </li>
+        {% endif %}
+        {% if items|length != 12 %}
+        <li class="page-item">
+            <a class="page-link disabled" href="#">Next</a>
+        </li>
+        {% else %}
+            {% if request.path_params %}
+        <li class="page-item">
+            <a class="page-link" href="/page={{ request.path_params.page|int +1 }}">Next</a>
+        </li>
+            {% else %}
+        <li class="page-item">
+            <a class="page-link" href="/page=2">Next</a>
+        </li>
+            {% endif %}
+        {% endif %}
+    </ul>
+</nav>
 
 {% endblock %}

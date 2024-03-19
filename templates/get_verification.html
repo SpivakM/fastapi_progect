@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% if user %}
+<h1>{{ user.name }}, your account was verified</h1>
+{% endif %}
+
+{% endblock %}
