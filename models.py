@@ -1,13 +1,10 @@
 from datetime import datetime
-from typing import Optional
 import uuid
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column
 
 from database import Base
-
-default_user_image_url = 'https://www.tenforums.com/attachments/user-accounts-family-safety/322690d1615743307t-user-account-image-log-user.png?s=c6ec74e460c755546f9c3ef47b6d6645'
 
 
 class BaseInfoMixin:

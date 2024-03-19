@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
 
 from api import api_router_user, api_router_auth, general_routers
 from web import web_router

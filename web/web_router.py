@@ -13,7 +13,7 @@ from pydantic import EmailStr
 import uuid
 
 
-#скидання пароля через пошту, базова апі
+# скидання пароля через пошту, базова апі
 
 
 web_router = APIRouter(

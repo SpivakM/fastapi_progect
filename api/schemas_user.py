@@ -6,7 +6,6 @@ class BaseFields(BaseModel):
     name: str = Field(description="your name", examples=['Mark Twen'])
 
 
-
 class PasswordField(BaseModel):
     password: str = Field(description="your password", min_length=8)
 

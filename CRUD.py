@@ -211,4 +211,3 @@ async def fetch_comments_by_post_id(session: AsyncSession, post_id: int) -> list
     query = select(Comment).where(Comment.post_id == post_id)
     result = await session.execute(query)
     return result.scalars().all() or []
-

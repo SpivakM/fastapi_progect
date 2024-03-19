@@ -31,6 +31,8 @@ async def create_user_account(
         name=new_user.name,
         email=new_user.email,
         hashed_password=hashed_password,
+        image_url='',
+        image_file='standard_icon.jpg',
         session=session
     )
     background_tasks.add_task(
@@ -39,6 +41,7 @@ async def create_user_account(
         user_uuid=saved_user.user_uuid,
         user_name=saved_user.name,
         host=request.base_url,
+        is_web=False
     )
     return new_user
 
