@@ -67,3 +67,16 @@ def send_email_verification(user_email, user_uuid, user_name, host, is_web=False
     send_email(recipients=[user_email],
                mail_body=content,
                mail_subject='Account verification')
+
+
+def send_password_reset(user_email, user_uuid, user_name, host):
+    reset_url = f'{host}new_password/{user_uuid}'
+
+    with open(Path(__file__).parent / 'password_reset.html', encoding='utf-8') as file:
+        content = file.read()
+        content = content \
+            .replace('{{ user }}', user_name) \
+            .replace('{{ link }}', reset_url)
+    send_email(recipients=[user_email],
+               mail_body=content,
+               mail_subject="Password reset")

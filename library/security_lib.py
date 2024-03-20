@@ -102,7 +102,6 @@ class AuthHandler:
     @classmethod
     async def get_refresh_token(cls, refresh_token: str, session: AsyncSession) -> LoginResponse:
         payload = await cls.decode_token(refresh_token)
-
         refresh_token_key = payload.get('key')
         user_token = await CRUD.get_refresh_token_by_key(refresh_token_key, session)
         if not user_token:

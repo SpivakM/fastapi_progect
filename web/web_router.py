@@ -6,14 +6,14 @@ from database import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 from library.security_lib import PasswordEncrypt, SecurityHandler
-from library.email_sender import send_email_verification
+from library.email_sender import send_email_verification, send_password_reset
 from fastapi.responses import RedirectResponse
 from starlette import status
 from pydantic import EmailStr
 import uuid
 
 
-# скидання пароля через пошту, базова апі
+# скидання пароля через пошту
 
 
 web_router = APIRouter(
@@ -264,7 +264,9 @@ async def user_login_web(
         redirect_url = request.url_for('index')
         response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
         return await SecurityHandler.set_cookies_web(user, response)
-    return templates.TemplateResponse('login.html', context={'request': request})
+    return templates.TemplateResponse('login.html', context={'request': request,
+                                                             'email': email,
+                                                             'errors': ['The entered email is not in our database']})
 
 
 @web_router.get('/logout', description='log out')
@@ -533,6 +535,60 @@ async def get_verification(request: Request,
                            session: AsyncSession = Depends(get_async_session)):
     await CRUD.verify_user_account(user_uuid=user.user_uuid, session=session)
     return templates.TemplateResponse('get_verification.html', context={'request': request, 'user': user})
+
+
+@web_router.get('/reset_password')
+@web_router.post('/reset_password')
+async def reset_password(request: Request, background_tasks: BackgroundTasks,
+                         email: EmailStr = Form(None),
+                         session: AsyncSession = Depends(get_async_session)):
+    if request.method == 'GET':
+        return templates.TemplateResponse('reset_password.html', context={'request': request})
+
+    if not CRUD.get_user_by_email(user_email=email, session=session):
+        return templates.TemplateResponse('reset_password.html', context={'request': request,
+                                                                          'incorrect_email': True,
+                                                                          'email': email})
+    user = await CRUD.get_user_by_email(user_email=email, session=session)
+
+    background_tasks.add_task(
+        send_password_reset,
+        user_email=email,
+        user_uuid=user.user_uuid,
+        user_name=user.name,
+        host=request.base_url,
+    )
+    redirect_url = request.url_for('index')
+    response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+    return response
+
+
+@web_router.get('/new_password/{user_uuid}')
+@web_router.post('/new_password/{user_uuid}')
+async def create_new_password(request: Request, user_uuid: str,
+                              password: str = Form(None), confirm_password: str = Form(None),
+                              session: AsyncSession = Depends(get_async_session)):
+    if request.method == 'GET':
+        return templates.TemplateResponse('new_password.html', context={'request': request, 'user_uuid': user_uuid})
+
+    errors = []
+    if len(password) < 8:
+        errors.append('Password must be at least 8 symbols')
+    if password != confirm_password:
+        errors.append('Password and Confirm password are not matching')
+
+    if errors:
+        return templates.TemplateResponse('new_password.html', context={'request': request, 'errors': errors,
+                                                                        'user_uuid': user_uuid})
+
+    user = await CRUD.get_user_by_uuid(user_uuid=user_uuid, session=session)
+    hashed_password = await PasswordEncrypt.get_password_hash(password)
+
+    await CRUD.modify_user(session=session, user_id=user.id, values={'hashed_password': hashed_password})
+
+    redirect_url = request.url_for('user_login_web')
+    response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+    return response
 
 
 @web_router.get("/")

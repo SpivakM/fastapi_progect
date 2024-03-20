@@ -147,7 +147,7 @@ async def create_post(session: AsyncSession,
                       topic: str,
                       text: str,
                       category: str,
-                      user_id: int) -> None:
+                      user_id: int) -> Post:
     post = Post(
         topic=topic,
         text=text,
@@ -157,6 +157,7 @@ async def create_post(session: AsyncSession,
     session.add(post)
     await session.commit()
     await session.refresh(post)
+    return post
 
 
 async def fetch_posts(session: AsyncSession, limit: int = 12, offset=0, q='') -> list:
@@ -196,7 +197,7 @@ async def get_post_by_id(post_id: int, session: AsyncSession) -> Post | None:
 async def create_comment(session: AsyncSession,
                          text: str,
                          user_id: int,
-                         post_id: int) -> None:
+                         post_id: int) -> Comment:
     comment = Comment(
         text=text,
         user_id=user_id,
@@ -205,6 +206,7 @@ async def create_comment(session: AsyncSession,
     session.add(comment)
     await session.commit()
     await session.refresh(comment)
+    return comment
 
 
 async def fetch_comments_by_post_id(session: AsyncSession, post_id: int) -> list:
